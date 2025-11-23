@@ -22,20 +22,34 @@ exports.create = (req, res) => {
   });
 };
 
-exports.update = (req, res) => {
-  const data = req.body;
-  const id = req.params.id;
+exports.updateProduct = (req, res) => {
+    const id = req.params.id;
+    const data = req.body;
 
-  User.update(id, data, (err, result) => {
-    if (err) return res.send(err);
-    res.json(result);
-  });
+    Product.update(id, data, (err, result) => {
+        if (err) return res.status(500).json(err);
+
+        return res.json({
+            message: "Product updated successfully",
+            data: { id, ...data }
+        });
+    });
 };
 
-exports.delete = (req, res) => {
-  const id = req.params.id;
-  User.delete(id, (err, result) => {
-    if (err) return res.send(err);
-    res.json(result);
-  });
+
+exports.deleteProduct = (req, res) => {
+    const id = req.params.id;
+
+    Product.delete(id, (err, result) => {
+        if (err) return res.status(500).json(err);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        return res.json({
+            message: "Product deleted successfully",
+            data: result
+        });
+    });
 };
